@@ -1,0 +1,7 @@
+FROM node:20
+WORKDIR /app
+ENV NODE_ENV="development"
+ENV DEBUG="grammy*"
+RUN npm install -g nodemon
+USER root
+CMD nodemon index.ts
