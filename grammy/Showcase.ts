@@ -5,29 +5,8 @@ import {
 	InlineKeyboard,
 	InputMediaBuilder,
 } from "grammy";
-
-import { Present } from ".";
-
-const presents: Present[] = [
-	{
-		id: 1,
-		title: "Название 1",
-		image: "AgACAgIAAxkBAAOKZV7_1MAfUEnPJNJL_mIoG4BKKXQAAgbSMRt5m_lKITn4FHXJa0ABAAMCAAN5AAMzBA",
-		description:
-			"Reprehenderit occaecat occaecat duis mollit velit nulla non.",
-		isVacant: true,
-		userId: null,
-	},
-	{
-		id: 2,
-		title: "Название 2",
-		image: "AgACAgIAAxkBAAOYZV8NYRWvdtZDkNuw9Wrjj5AKT_wAAk3SMRt5m_lKPkEzRuMsJOYBAAMCAANzAAMzBA",
-		description:
-			"Mollit quis ad fugiat duis fugiat adipisicing dolor voluptate ullamco enim cillum.",
-		isVacant: false,
-		userId: 446374743,
-	},
-];
+import { prisma } from "./bot";
+import { errorHandler } from "./util";
 
 export class Showcase<C extends Context> extends Composer<C> {
 	constructor(...args: any[]) {
@@ -50,6 +29,80 @@ export class Showcase<C extends Context> extends Composer<C> {
 				ctx.callbackQuery.data.startsWith("revoke_present_")
 			)
 			.use((ctx) => this.revokePresent(ctx, "revoke_present_"));
+
+		this.use((ctx) => {
+			const chatId = ctx.chat?.id;
+
+			if (chatId) {
+				this.sendPresent(ctx, chatId);
+			}
+		});
+
+		this.errorBoundary(errorHandler);
+	}
+
+	async sendPresent(ctx: Context, chatId: number) {
+		const greeting = await ctx.reply("Hi").catch(errorHandler);
+
+		const oldMessage = await prisma.presentMessage.findFirst({
+			where: { chatId },
+		});
+
+		if (oldMessage) {
+			await prisma.presentMessage.delete({ where: { chatId } });
+
+			await ctx.api
+				.deleteMessage(oldMessage.chatId, oldMessage.messageId)
+				.catch(errorHandler);
+		}
+
+		const present = await prisma.present.findFirst();
+
+		if (!present) {
+			await ctx.api.sendMessage(
+				chatId,
+				"Что-то пошло не так. Попробуйте еще раз чуть позже."
+			);
+
+			return;
+		}
+
+		const inlineKeyboard = new InlineKeyboard();
+		inlineKeyboard.text("<", `prev_present_${present.id}`);
+		if (present.isVacant) {
+			inlineKeyboard.text("Я возьму", `take_present_${present.id}`);
+		} else if (present.userId === ctx.from?.id) {
+			inlineKeyboard.text("Отказаться", `revoke_present_${present.id}`);
+		} else {
+			inlineKeyboard.text("Занято");
+		}
+		inlineKeyboard.text(">", `next_present_${present.id}`);
+
+		const caption = `${present.title}\n${present.description}`;
+
+		const message = await ctx
+			.replyWithPhoto(present.image, {
+				reply_markup: inlineKeyboard,
+				caption,
+			})
+			.catch(errorHandler);
+
+		if (message) {
+			await prisma.presentMessage.create({
+				data: {
+					chatId,
+					messageId: message.message_id,
+					userId: chatId,
+					presentId: present.id,
+				},
+			});
+		}
+
+		if (greeting) {
+			await ctx.api
+				.deleteMessage(greeting.chat.id, greeting.message_id)
+				.catch(errorHandler);
+		}
 	}
 
 	async takePresent(ctx: Filter<C, "callback_query:data">, prefix: string) {
@@ -58,10 +111,10 @@ export class Showcase<C extends Context> extends Composer<C> {
 		const presents = await this.getPresents();
 		const present = presents.find((present) => present.id === presentId);
 
-		if (!present) {
+		if (!present || !presentId) {
 			await this.updatePresentMessage(
 				ctx,
-				presents[0],
+				presents[0].id,
 				chatId,
 				messageId
 			);
@@ -70,10 +123,15 @@ export class Showcase<C extends Context> extends Composer<C> {
 		}
 
 		if (present.isVacant) {
-			present.isVacant = false;
-			present.userId = ctx.from.id;
+			await prisma.present.update({
+				where: { id: presentId },
+				data: {
+					isVacant: false,
+					userId: ctx.from.id,
+				},
+			});
 
-			await this.updatePresentMessage(ctx, present, chatId, messageId);
+			await this.updatePresentMessage(ctx, presentId, chatId, messageId);
 			return;
 		}
 	}
@@ -84,10 +142,10 @@ export class Showcase<C extends Context> extends Composer<C> {
 		const presents = await this.getPresents();
 		const present = presents.find((present) => present.id === presentId);
 
-		if (!present) {
+		if (!present || !presentId) {
 			await this.updatePresentMessage(
 				ctx,
-				presents[0],
+				presents[0].id,
 				chatId,
 				messageId
 			);
@@ -96,10 +154,15 @@ export class Showcase<C extends Context> extends Composer<C> {
 		}
 
 		if (!present.isVacant && present.userId === ctx.from.id) {
-			present.isVacant = true;
-			present.userId = null;
+			await prisma.present.update({
+				where: { id: presentId },
+				data: {
+					isVacant: true,
+					userId: null,
+				},
+			});
 
-			await this.updatePresentMessage(ctx, present, chatId, messageId);
+			await this.updatePresentMessage(ctx, presentId, chatId, messageId);
 			return;
 		}
 	}
@@ -117,7 +180,7 @@ export class Showcase<C extends Context> extends Composer<C> {
 		const index = Math.max(0, presentIds.indexOf(presentId));
 		const present = presents[index === 0 ? presents.length - 1 : index - 1];
 
-		await this.updatePresentMessage(ctx, present, chatId, messageId);
+		await this.updatePresentMessage(ctx, present.id, chatId, messageId);
 	}
 
 	async nextPresent(ctx: Filter<C, "callback_query:data">, prefix: string) {
@@ -132,7 +195,7 @@ export class Showcase<C extends Context> extends Composer<C> {
 		const index = Math.max(0, presentIds.indexOf(presentId));
 		const present = presents[(index + 1) % presents.length];
 
-		await this.updatePresentMessage(ctx, present, chatId, messageId);
+		await this.updatePresentMessage(ctx, present.id, chatId, messageId);
 	}
 
 	getInfo(
@@ -172,11 +235,19 @@ export class Showcase<C extends Context> extends Composer<C> {
 
 	async updatePresentMessage(
 		ctx: Filter<C, "callback_query:data">,
-		present: Present,
+		presentId: number,
 		chatId: number | null,
 		messageId: number | null
 	) {
 		if (!chatId || !messageId) {
+			return;
+		}
+
+		const present = await prisma.present.findFirst({
+			where: { id: presentId },
+		});
+
+		if (!present) {
 			return;
 		}
 
@@ -202,6 +273,6 @@ export class Showcase<C extends Context> extends Composer<C> {
 	}
 
 	async getPresents() {
-		return presents;
+		return await prisma.present.findMany({ orderBy: { createdAt: "asc" } });
 	}
 }

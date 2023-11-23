@@ -1,53 +1,60 @@
-import { GrammyError, HttpError, InlineKeyboard } from "grammy";
-import { bot } from "./bot";
+import { bot, prisma } from "./bot";
+import { run } from "@grammyjs/runner";
 import { Showcase } from "./Showcase";
+import { errorHandler } from "./util";
 
-export interface Present {
-	id: number;
-	title: string;
-	image: string;
-	description: string;
-	isVacant: boolean;
-	userId: number | null;
-}
+const NODE_ENV = process.env["NODE_ENV"];
+bot.use(async (ctx, next) => {
+	if (ctx.from?.id) {
+		const data = {
+			id: ctx.from.id,
+			first_name: ctx.from?.first_name,
+			last_name: ctx.from?.last_name,
+			username: ctx.from?.username,
+		};
 
-const showcase = new Showcase();
+		await prisma.user.upsert({
+			where: { id: data.id },
+			update: data,
+			create: data,
+		});
 
-bot.use(showcase);
-
-bot.on("message", (ctx, next) => {
-	console.log("ctx.update:", ctx.update);
-	console.log("ctx.message:", ctx.message);
-
-	const inlineKeyboard = new InlineKeyboard()
-		.text("<", "prev_present_1")
-		.text(">", "next_present_1");
-
-	ctx.replyWithPhoto(
-		"AgACAgIAAxkBAAOKZV7_1MAfUEnPJNJL_mIoG4BKKXQAAgbSMRt5m_lKITn4FHXJa0ABAAMCAAN5AAMzBA",
-		{
-			reply_markup: inlineKeyboard,
-			caption: "Подпись!",
+		if (NODE_ENV === "development") {
+			await prisma.user.update({
+				where: { id: data.id },
+				data: {
+					// isFriend: true,
+				},
+			});
 		}
-	);
+	}
 
 	next();
 });
 
-bot.catch((err) => {
-	const ctx = err.ctx;
-	console.error(`Error while handling update ${ctx.update.update_id}:`);
-	const e = err.error;
-	if (e instanceof GrammyError) {
-		console.error("Error in request:", e.description);
-	} else if (e instanceof HttpError) {
-		console.error("Could not contact Telegram:", e);
-	} else {
-		console.error("Unknown error:", e);
+const ADMIN_PASSWORD = process.env["ADMIN_PASSWORD"];
+bot.on("message:text", async (ctx, next) => {
+	if (ctx.message.text !== ADMIN_PASSWORD) {
+		return next();
 	}
+
+	await Promise.all([
+		ctx.api.deleteMessage(ctx.chat.id, ctx.message.message_id),
+		ctx.api.sendMessage(ctx.chat.id, "Аве админ!"),
+		prisma.user.update({
+			where: { id: ctx.from.id },
+			data: { isAdmin: true },
+		}),
+	]);
 });
 
-process.once("SIGINT", () => bot.stop());
-process.once("SIGTERM", () => bot.stop());
+const showcase = new Showcase();
 
-bot.start();
+bot.errorBoundary(errorHandler).use(showcase);
+bot.catch(errorHandler);
+
+const runner = run(bot);
+
+const stopRunner = () => runner.isRunning() && runner.stop();
+process.once("SIGINT", stopRunner);
+process.once("SIGTERM", stopRunner);

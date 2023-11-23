@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "./client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  key   String @unique
+  value String
+}
+
+model User {
+  id        Int      @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  first_name String?
+  last_name  String?
+  username   String?
+
+  isAdmin  Boolean @default(false)
+  isOwner  Boolean @default(false)
+  isFriend Boolean @default(false)
+
+  presents        Present[]
+  presentMessages PresentMessage[]
+}
+
+model Present {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  title       String @unique
+  image       String
+  description String
+
+  isVacant Boolean @default(true)
+
+  user   User? @relation(fields: [userId], references: [id])
+  userId Int?
+
+  presentMessages PresentMessage[]
+}
+
+model PresentMessage {
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  chatId    Int @unique
+  messageId Int
+
+  present   Present @relation(fields: [presentId], references: [id])
+  presentId Int
+
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+
+  @@unique([chatId, messageId])
+}

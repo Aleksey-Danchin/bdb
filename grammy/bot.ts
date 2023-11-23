@@ -1,6 +1,6 @@
 import { PrismaAdapter } from "@grammyjs/storage-prisma";
-import { PrismaClient } from "@prisma/client";
 import { Bot, Context, SessionFlavor, enhanceStorage, session } from "grammy";
+import { PrismaClient } from "./prisma/client";
 
 const TELEGRAM_BOT_TOKEN = process.env["TELEGRAM_BOT_TOKEN"];
 
@@ -14,7 +14,7 @@ interface SessionData_v0 {
 
 type SessionData = SessionData_v0;
 
-type MyContext = Context & SessionFlavor<SessionData>;
+export type MyContext = Context & SessionFlavor<SessionData>;
 
 export const bot = new Bot<MyContext>(TELEGRAM_BOT_TOKEN);
 export const prisma = new PrismaClient();
