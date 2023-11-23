@@ -1,7 +1,7 @@
 import { bot, prisma } from "./bot";
 import { run } from "@grammyjs/runner";
 import { Showcase } from "./Showcase";
-import { errorHandler } from "./util";
+import { errorHandler, reverse } from "./util";
 
 const NODE_ENV = process.env["NODE_ENV"];
 bot.use(async (ctx, next) => {
@@ -38,19 +38,36 @@ bot.on("message:text", async (ctx, next) => {
 		return next();
 	}
 
+	const user = await prisma.user.findFirst({ where: { id: ctx.from.id } });
+	if (!user) {
+		return next();
+	}
+
 	await Promise.all([
 		ctx.api.deleteMessage(ctx.chat.id, ctx.message.message_id),
-		ctx.api.sendMessage(ctx.chat.id, "Аве админ!"),
+		ctx.api.sendMessage(
+			ctx.chat.id,
+			user.isAdmin ? "Аве админ!" : reverse("Аве админ!")
+		),
 		prisma.user.update({
 			where: { id: ctx.from.id },
-			data: { isAdmin: true },
+			data: { isAdmin: !user.isAdmin },
 		}),
 	]);
 });
 
 const showcase = new Showcase();
 
-bot.errorBoundary(errorHandler).use(showcase);
+bot.errorBoundary(errorHandler)
+	.filter(async (ctx) => {
+		const user = await prisma.user.findFirst({
+			where: { id: ctx.from?.id },
+		});
+
+		return Boolean(user && user.isFriend);
+	})
+	.use(showcase);
+
 bot.catch(errorHandler);
 
 const runner = run(bot);

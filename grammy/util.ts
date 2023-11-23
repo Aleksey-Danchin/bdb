@@ -15,3 +15,5 @@ export const errorHandler = <T extends Context>(err: BotError<T>) => {
 
 export const delay = (n: number) =>
 	new Promise<void>((resolve) => setTimeout(resolve, n));
+
+export const reverse = (str: string) => str.split("").reverse().join("");
