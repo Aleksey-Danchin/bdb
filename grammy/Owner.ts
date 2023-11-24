@@ -1,7 +1,8 @@
-import { CommandContext, Composer, Context } from "grammy";
+import { CommandContext, Composer, Filter } from "grammy";
 import { errorHandler } from "./util";
-import { prisma } from "./bot";
+import { MyContext, prisma } from "./bot";
 import { User } from "./prisma/client";
+import { sendPresentMessage, updatePresentMessage } from "./PresentService";
 
 const usersToList = (users: User[]) =>
 	users
@@ -13,11 +14,23 @@ const usersToList = (users: User[]) =>
 		)
 		.join(", ");
 
-export class Owner<C extends Context> extends Composer<C> {
+export class Owner<C extends MyContext> extends Composer<C> {
 	constructor(...args: any[]) {
 		super(...args);
 
 		this.errorBoundary(errorHandler);
+
+		this.on("callback_query:data")
+			.filter((ctx) => ctx.callbackQuery.data.startsWith("prev_present_"))
+			.use((ctx) => this.prevPresent(ctx, "prev_present_"));
+
+		this.on("callback_query:data")
+			.filter((ctx) => ctx.callbackQuery.data.startsWith("next_present_"))
+			.use((ctx) => this.nextPresent(ctx, "next_present_"));
+
+		this.on("callback_query:data")
+			.filter((ctx) => ctx.callbackQuery.data.startsWith("edit_present_"))
+			.use((ctx) => this.editPresent(ctx, "edit_present_"));
 
 		this.command("friends", (ctx) => this.showFriends(ctx));
 
@@ -27,7 +40,80 @@ export class Owner<C extends Context> extends Composer<C> {
 			(ctx) => this.deleteFriend(ctx)
 		);
 
+		this.command(
+			["addpresent", "add_present", "create_present", "createpresent"],
+			(ctx) => ctx.conversation.enter("create_present")
+		);
+
+		this.use(async (ctx) => {
+			const chatId = ctx.chat?.id;
+
+			if (chatId) {
+				await sendPresentMessage(chatId);
+			}
+		});
+
 		this.errorBoundary(errorHandler);
+	}
+
+	async prevPresent(ctx: Filter<C, "callback_query:data">, prefix: string) {
+		let [presentId, messageId] = this.getInfo(ctx, prefix);
+
+		const presents = await prisma.present.findMany({
+			orderBy: { createdAt: "asc" },
+		});
+
+		if (!presentId) {
+			presentId = presents[0].id;
+		}
+
+		const presentIds = presents.map((present) => present.id);
+		const index = Math.max(0, presentIds.indexOf(presentId));
+		const present = presents[index === 0 ? presents.length - 1 : index - 1];
+
+		if (messageId) {
+			await updatePresentMessage(present, messageId);
+		}
+	}
+
+	async editPresent(ctx: Filter<C, "callback_query:data">, prefix: string) {
+		let [presentId, messageId] = this.getInfo(ctx, prefix);
+
+		if (!presentId) {
+			throw Error("Present id not found.");
+		}
+
+		const present = await prisma.present.findFirst({
+			where: { id: presentId },
+		});
+
+		if (!present) {
+			throw Error("Present not found");
+		}
+
+		ctx.session.editPresentId = presentId;
+
+		await ctx.conversation.enter("edit_present");
+	}
+
+	async nextPresent(ctx: Filter<C, "callback_query:data">, prefix: string) {
+		let [presentId, messageId] = this.getInfo(ctx, prefix);
+
+		const presents = await prisma.present.findMany({
+			orderBy: { createdAt: "asc" },
+		});
+
+		if (!presentId) {
+			presentId = presents[0].id;
+		}
+
+		const presentIds = presents.map((present) => present.id);
+		const index = Math.max(0, presentIds.indexOf(presentId));
+		const present = presents[(index + 1) % presents.length];
+
+		if (messageId) {
+			await updatePresentMessage(present, messageId);
+		}
 	}
 
 	async showFriends(ctx: CommandContext<C>) {
@@ -191,5 +277,27 @@ export class Owner<C extends Context> extends Composer<C> {
 					.catch(errorHandler);
 			}
 		}
+	}
+
+	getInfo(
+		ctx: Filter<C, "callback_query:data">,
+		prefix: string
+	): [null | number, null | number] {
+		const info: [null | number, null | number] = [null, null];
+
+		const reg = new RegExp(`${prefix}(\\d+)`);
+		const match = ctx.callbackQuery.data.match(reg);
+
+		if (match) {
+			info[0] = parseInt(match[1], 10);
+		}
+
+		const messageId = ctx.callbackQuery.message?.message_id;
+
+		if (messageId) {
+			info[1] = messageId;
+		}
+
+		return info;
 	}
 }

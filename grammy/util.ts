@@ -21,3 +21,16 @@ export const delay = (n: number) =>
 	new Promise<void>((resolve) => setTimeout(resolve, n));
 
 export const reverse = (str: string) => str.split("").reverse().join("");
+
+export const shuffle = <T>(items: T[]) => {
+	const shuffled = [];
+
+	while (items.length) {
+		const index = Math.floor(Math.random() * items.length);
+		const item = items.splice(index, 1)[0];
+		shuffled.push(item);
+	}
+
+	items.push(...shuffled);
+	return items;
+};
