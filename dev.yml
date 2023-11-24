@@ -23,7 +23,7 @@ services:
         image: postgres
         restart: always
         volumes:
-            - $PWD/database:/data/db
+            - $PWD/dbs:/var/lib/postgresql/data
         ports:
             - 5432:5432
         environment:
