@@ -3,3 +3,9 @@ up:
 
 down:
 	docker compose -f dev.yml down
+
+prod_up:
+	docker compose -f prod.yml --env-file .env.prod up --build
+
+prod_down:
+	docker compose -f prod.yml down

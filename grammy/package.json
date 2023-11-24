@@ -1,11 +1,9 @@
 {
-	"devDependencies": {
+	"dependencies": {
 		"@types/node": "^20.9.3",
 		"prisma": "^5.6.0",
 		"ts-node": "^10.9.1",
-		"typescript": "^5.3.2"
-	},
-	"dependencies": {
+		"typescript": "^5.3.2",
 		"@grammyjs/conversations": "^1.1.2",
 		"@grammyjs/runner": "^2.0.3",
 		"@grammyjs/storage-prisma": "^2.4.0",

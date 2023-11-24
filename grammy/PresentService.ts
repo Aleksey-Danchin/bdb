@@ -1,7 +1,7 @@
 import { InlineKeyboard, InputMediaBuilder } from "grammy";
 import { bot, prisma } from "./bot";
 import { PresentMessage, Present } from "./prisma/client";
-import { delay, errorHandler } from "./util";
+import { errorHandler } from "./util";
 
 export const sendPresentMessage = async (chatId: number) => {
 	const answer = await bot.api
@@ -23,8 +23,6 @@ export const sendPresentMessage = async (chatId: number) => {
 	if (!present) {
 		return;
 	}
-
-	await delay(5000);
 
 	const messageForDeleting = await prisma.presentMessage.findFirst({
 		where: { chatId },
