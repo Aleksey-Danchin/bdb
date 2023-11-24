@@ -1,7 +1,9 @@
 import { bot, prisma } from "./bot";
 import { run } from "@grammyjs/runner";
-import { Showcase } from "./Showcase";
+import { Friend } from "./Friend";
 import { errorHandler, reverse } from "./util";
+import { Owner } from "./Owner";
+import { Admin } from "./Admin";
 
 const NODE_ENV = process.env["NODE_ENV"];
 bot.use(async (ctx, next) => {
@@ -47,7 +49,7 @@ bot.on("message:text", async (ctx, next) => {
 		ctx.api.deleteMessage(ctx.chat.id, ctx.message.message_id),
 		ctx.api.sendMessage(
 			ctx.chat.id,
-			user.isAdmin ? "Аве админ!" : reverse("Аве админ!")
+			user.isAdmin ? reverse("Аве админ!") : "Аве админ!"
 		),
 		prisma.user.update({
 			where: { id: ctx.from.id },
@@ -56,8 +58,31 @@ bot.on("message:text", async (ctx, next) => {
 	]);
 });
 
-const showcase = new Showcase();
+const admin = new Admin();
+bot.errorBoundary(errorHandler)
+	.filter(async (ctx) => {
+		const user = await prisma.user.findFirst({
+			where: { id: ctx.from?.id },
+		});
 
+		return Boolean(user && user.isAdmin);
+	})
+	.use(admin);
+
+const owner = new Owner();
+bot.errorBoundary(errorHandler)
+	.filter(async (ctx) => {
+		const user = await prisma.user.findFirst({
+			where: { id: ctx.from?.id },
+		});
+
+		return Boolean(user && user.isOwner);
+	})
+	.use(owner);
+
+bot.catch(errorHandler);
+
+const friend = new Friend();
 bot.errorBoundary(errorHandler)
 	.filter(async (ctx) => {
 		const user = await prisma.user.findFirst({
@@ -66,7 +91,7 @@ bot.errorBoundary(errorHandler)
 
 		return Boolean(user && user.isFriend);
 	})
-	.use(showcase);
+	.use(friend);
 
 bot.catch(errorHandler);
 

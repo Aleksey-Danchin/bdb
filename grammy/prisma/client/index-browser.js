@@ -154,9 +154,26 @@ exports.Prisma.QueryMode = {
   insensitive: 'insensitive'
 };
 
+exports.Prisma.SessionOrderByRelevanceFieldEnum = {
+  key: 'key',
+  value: 'value'
+};
+
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
+};
+
+exports.Prisma.UserOrderByRelevanceFieldEnum = {
+  first_name: 'first_name',
+  last_name: 'last_name',
+  username: 'username'
+};
+
+exports.Prisma.PresentOrderByRelevanceFieldEnum = {
+  title: 'title',
+  image: 'image',
+  description: 'description'
 };
 
 
