@@ -5,11 +5,9 @@ import { errorHandler } from "./util";
 
 export const sendPresentMessage = async (chatId: number) => {
 	const answer = await bot.api
-		.sendPhoto(
-			chatId,
-			"AgACAgIAAxkBAAOKZV7_1MAfUEnPJNJL_mIoG4BKKXQAAgbSMRt5m_lKITn4FHXJa0ABAAMCAAN5AAMzBA",
-			{ caption: "Пару секунд . . ." }
-		)
+		.sendPhoto(chatId, "https://grammy.dev/images/grammY.png", {
+			caption: "Пару секунд . . .",
+		})
 		.catch(errorHandler);
 
 	if (!answer) {
