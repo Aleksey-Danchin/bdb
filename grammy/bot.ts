@@ -198,6 +198,8 @@ async function editPresent(conversation: MyConversation, ctx: MyContext) {
 				}
 			}
 		} else if (data === "Удалить") {
+			let deleted = false;
+
 			while (true) {
 				const buttons = shuffle([
 					"Удалить",
@@ -217,8 +219,13 @@ async function editPresent(conversation: MyConversation, ctx: MyContext) {
 					await deletePresentMessages(present.id);
 					await prisma.present.delete({ where: { id: present.id } });
 					await ctx.reply("Удалено.");
-					break mainloop;
+					deleted = true;
+					break;
 				}
+			}
+
+			if (deleted) {
+				break;
 			}
 		} else if (data === "Сохранить") {
 			await prisma.present.update({
@@ -228,7 +235,7 @@ async function editPresent(conversation: MyConversation, ctx: MyContext) {
 
 			await updatePresentMessages(present.id);
 			await ctx.reply("Сохранено");
-			break mainloop;
+			break;
 		}
 	}
 }
