@@ -213,15 +213,16 @@ async function editPresent(conversation: MyConversation, ctx: MyContext) {
 				});
 
 				const data = await conversation.wait();
-				const text = data.message?.text;
+				const text = data.callbackQuery?.data;
 
 				if (text === "Удалить") {
 					await deletePresentMessages(present.id);
 					await prisma.present.delete({ where: { id: present.id } });
 					await ctx.reply("Удалено.");
 					deleted = true;
-					break;
 				}
+
+				break;
 			}
 
 			if (deleted) {
