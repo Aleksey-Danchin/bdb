@@ -125,9 +125,11 @@ export const updatePresentMessage = async (
 
 	inlineKeyboard.text("<", `prev_present_${present.id}`);
 
-	if (user && user.isOwner) {
+	if (user.isOwner && user.isShowStatus) {
 		inlineKeyboard.text(present.isVacant ? "Свободно" : "Занято");
-	} else if (user && user.isFriend) {
+	}
+
+	if (user.isFriend) {
 		if (present.isVacant) {
 			inlineKeyboard.text("Я возьму", `take_present_${present.id}`);
 		} else if (present.userId === message.userId) {
@@ -136,6 +138,7 @@ export const updatePresentMessage = async (
 			inlineKeyboard.text("Занято");
 		}
 	}
+
 	inlineKeyboard.text(">", `next_present_${present.id}`);
 
 	if (user && user.isOwner) {

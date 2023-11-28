@@ -121,7 +121,8 @@ exports.Prisma.UserScalarFieldEnum = {
   username: 'username',
   isAdmin: 'isAdmin',
   isOwner: 'isOwner',
-  isFriend: 'isFriend'
+  isFriend: 'isFriend',
+  isShowStatus: 'isShowStatus'
 };
 
 exports.Prisma.PresentScalarFieldEnum = {

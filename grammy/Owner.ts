@@ -34,6 +34,10 @@ export class Owner<C extends MyContext> extends Composer<C> {
 
 		this.command("friends", (ctx) => this.showFriends(ctx));
 
+		this.command(["setshowstatus", "set_show_status"], (ctx) =>
+			this.setShowStatus(ctx)
+		);
+
 		this.command(["add_friend", "addfriend"], (ctx) => this.addFriend(ctx));
 		this.command(
 			["remove_friend", "removefriend", "delete_friend", "deletefriend"],
@@ -125,6 +129,36 @@ export class Owner<C extends MyContext> extends Composer<C> {
 		}
 
 		await ctx.reply("Список друзей: " + usersToList(users));
+	}
+
+	async setShowStatus(ctx: CommandContext<C>) {
+		if (!ctx.message?.text) {
+			return;
+		}
+
+		const { text } = ctx.message;
+		const mode = text.slice(-3).trim();
+
+		if (!["on", "off"].includes(mode)) {
+			return;
+		}
+
+		if (!ctx.from?.id) {
+			return;
+		}
+
+		await prisma.user.update({
+			where: { id: ctx.from.id },
+			data: { isShowStatus: mode === "on" },
+		});
+
+		await ctx.reply(
+			mode === "on"
+				? "Теперь вы видите статус подарков"
+				: "Статус подарков для вас скрыт"
+		);
+
+		await sendPresentMessage(ctx.chat.id);
 	}
 
 	async addFriend(ctx: CommandContext<C>) {

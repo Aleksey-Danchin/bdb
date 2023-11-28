@@ -30,6 +30,8 @@ model User {
   isOwner  Boolean @default(false)
   isFriend Boolean @default(false)
 
+  isShowStatus Boolean @default(false)
+
   presents        Present[]
   presentMessages PresentMessage[]
 }

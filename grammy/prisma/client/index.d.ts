@@ -2046,6 +2046,7 @@ export namespace Prisma {
     isAdmin: boolean | null
     isOwner: boolean | null
     isFriend: boolean | null
+    isShowStatus: boolean | null
   }
 
   export type UserMaxAggregateOutputType = {
@@ -2058,6 +2059,7 @@ export namespace Prisma {
     isAdmin: boolean | null
     isOwner: boolean | null
     isFriend: boolean | null
+    isShowStatus: boolean | null
   }
 
   export type UserCountAggregateOutputType = {
@@ -2070,6 +2072,7 @@ export namespace Prisma {
     isAdmin: number
     isOwner: number
     isFriend: number
+    isShowStatus: number
     _all: number
   }
 
@@ -2092,6 +2095,7 @@ export namespace Prisma {
     isAdmin?: true
     isOwner?: true
     isFriend?: true
+    isShowStatus?: true
   }
 
   export type UserMaxAggregateInputType = {
@@ -2104,6 +2108,7 @@ export namespace Prisma {
     isAdmin?: true
     isOwner?: true
     isFriend?: true
+    isShowStatus?: true
   }
 
   export type UserCountAggregateInputType = {
@@ -2116,6 +2121,7 @@ export namespace Prisma {
     isAdmin?: true
     isOwner?: true
     isFriend?: true
+    isShowStatus?: true
     _all?: true
   }
 
@@ -2215,6 +2221,7 @@ export namespace Prisma {
     isAdmin: boolean
     isOwner: boolean
     isFriend: boolean
+    isShowStatus: boolean
     _count: UserCountAggregateOutputType | null
     _avg: UserAvgAggregateOutputType | null
     _sum: UserSumAggregateOutputType | null
@@ -2246,6 +2253,7 @@ export namespace Prisma {
     isAdmin?: boolean
     isOwner?: boolean
     isFriend?: boolean
+    isShowStatus?: boolean
     presents?: boolean | User$presentsArgs<ExtArgs>
     presentMessages?: boolean | User$presentMessagesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -2261,6 +2269,7 @@ export namespace Prisma {
     isAdmin?: boolean
     isOwner?: boolean
     isFriend?: boolean
+    isShowStatus?: boolean
   }
 
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2286,6 +2295,7 @@ export namespace Prisma {
       isAdmin: boolean
       isOwner: boolean
       isFriend: boolean
+      isShowStatus: boolean
     }, ExtArgs["result"]["user"]>
     composites: {}
   }
@@ -2692,6 +2702,7 @@ export namespace Prisma {
     readonly isAdmin: FieldRef<"User", 'Boolean'>
     readonly isOwner: FieldRef<"User", 'Boolean'>
     readonly isFriend: FieldRef<"User", 'Boolean'>
+    readonly isShowStatus: FieldRef<"User", 'Boolean'>
   }
     
 
@@ -5105,7 +5116,8 @@ export namespace Prisma {
     username: 'username',
     isAdmin: 'isAdmin',
     isOwner: 'isOwner',
-    isFriend: 'isFriend'
+    isFriend: 'isFriend',
+    isShowStatus: 'isShowStatus'
   };
 
   export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
@@ -5309,6 +5321,7 @@ export namespace Prisma {
     isAdmin?: BoolFilter<"User"> | boolean
     isOwner?: BoolFilter<"User"> | boolean
     isFriend?: BoolFilter<"User"> | boolean
+    isShowStatus?: BoolFilter<"User"> | boolean
     presents?: PresentListRelationFilter
     presentMessages?: PresentMessageListRelationFilter
   }
@@ -5323,6 +5336,7 @@ export namespace Prisma {
     isAdmin?: SortOrder
     isOwner?: SortOrder
     isFriend?: SortOrder
+    isShowStatus?: SortOrder
     presents?: PresentOrderByRelationAggregateInput
     presentMessages?: PresentMessageOrderByRelationAggregateInput
     _relevance?: UserOrderByRelevanceInput
@@ -5341,6 +5355,7 @@ export namespace Prisma {
     isAdmin?: BoolFilter<"User"> | boolean
     isOwner?: BoolFilter<"User"> | boolean
     isFriend?: BoolFilter<"User"> | boolean
+    isShowStatus?: BoolFilter<"User"> | boolean
     presents?: PresentListRelationFilter
     presentMessages?: PresentMessageListRelationFilter
   }, "id">
@@ -5355,6 +5370,7 @@ export namespace Prisma {
     isAdmin?: SortOrder
     isOwner?: SortOrder
     isFriend?: SortOrder
+    isShowStatus?: SortOrder
     _count?: UserCountOrderByAggregateInput
     _avg?: UserAvgOrderByAggregateInput
     _max?: UserMaxOrderByAggregateInput
@@ -5375,6 +5391,7 @@ export namespace Prisma {
     isAdmin?: BoolWithAggregatesFilter<"User"> | boolean
     isOwner?: BoolWithAggregatesFilter<"User"> | boolean
     isFriend?: BoolWithAggregatesFilter<"User"> | boolean
+    isShowStatus?: BoolWithAggregatesFilter<"User"> | boolean
   }
 
   export type PresentWhereInput = {
@@ -5563,6 +5580,7 @@ export namespace Prisma {
     isAdmin?: boolean
     isOwner?: boolean
     isFriend?: boolean
+    isShowStatus?: boolean
     presents?: PresentCreateNestedManyWithoutUserInput
     presentMessages?: PresentMessageCreateNestedManyWithoutUserInput
   }
@@ -5577,6 +5595,7 @@ export namespace Prisma {
     isAdmin?: boolean
     isOwner?: boolean
     isFriend?: boolean
+    isShowStatus?: boolean
     presents?: PresentUncheckedCreateNestedManyWithoutUserInput
     presentMessages?: PresentMessageUncheckedCreateNestedManyWithoutUserInput
   }
@@ -5591,6 +5610,7 @@ export namespace Prisma {
     isAdmin?: BoolFieldUpdateOperationsInput | boolean
     isOwner?: BoolFieldUpdateOperationsInput | boolean
     isFriend?: BoolFieldUpdateOperationsInput | boolean
+    isShowStatus?: BoolFieldUpdateOperationsInput | boolean
     presents?: PresentUpdateManyWithoutUserNestedInput
     presentMessages?: PresentMessageUpdateManyWithoutUserNestedInput
   }
@@ -5605,6 +5625,7 @@ export namespace Prisma {
     isAdmin?: BoolFieldUpdateOperationsInput | boolean
     isOwner?: BoolFieldUpdateOperationsInput | boolean
     isFriend?: BoolFieldUpdateOperationsInput | boolean
+    isShowStatus?: BoolFieldUpdateOperationsInput | boolean
     presents?: PresentUncheckedUpdateManyWithoutUserNestedInput
     presentMessages?: PresentMessageUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -5619,6 +5640,7 @@ export namespace Prisma {
     isAdmin?: boolean
     isOwner?: boolean
     isFriend?: boolean
+    isShowStatus?: boolean
   }
 
   export type UserUpdateManyMutationInput = {
@@ -5631,6 +5653,7 @@ export namespace Prisma {
     isAdmin?: BoolFieldUpdateOperationsInput | boolean
     isOwner?: BoolFieldUpdateOperationsInput | boolean
     isFriend?: BoolFieldUpdateOperationsInput | boolean
+    isShowStatus?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type UserUncheckedUpdateManyInput = {
@@ -5643,6 +5666,7 @@ export namespace Prisma {
     isAdmin?: BoolFieldUpdateOperationsInput | boolean
     isOwner?: BoolFieldUpdateOperationsInput | boolean
     isFriend?: BoolFieldUpdateOperationsInput | boolean
+    isShowStatus?: BoolFieldUpdateOperationsInput | boolean
   }
 
   export type PresentCreateInput = {
@@ -5923,6 +5947,7 @@ export namespace Prisma {
     isAdmin?: SortOrder
     isOwner?: SortOrder
     isFriend?: SortOrder
+    isShowStatus?: SortOrder
   }
 
   export type UserAvgOrderByAggregateInput = {
@@ -5939,6 +5964,7 @@ export namespace Prisma {
     isAdmin?: SortOrder
     isOwner?: SortOrder
     isFriend?: SortOrder
+    isShowStatus?: SortOrder
   }
 
   export type UserMinOrderByAggregateInput = {
@@ -5951,6 +5977,7 @@ export namespace Prisma {
     isAdmin?: SortOrder
     isOwner?: SortOrder
     isFriend?: SortOrder
+    isShowStatus?: SortOrder
   }
 
   export type UserSumOrderByAggregateInput = {
@@ -6653,6 +6680,7 @@ export namespace Prisma {
     isAdmin?: boolean
     isOwner?: boolean
     isFriend?: boolean
+    isShowStatus?: boolean
     presentMessages?: PresentMessageCreateNestedManyWithoutUserInput
   }
 
@@ -6666,6 +6694,7 @@ export namespace Prisma {
     isAdmin?: boolean
     isOwner?: boolean
     isFriend?: boolean
+    isShowStatus?: boolean
     presentMessages?: PresentMessageUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -6721,6 +6750,7 @@ export namespace Prisma {
     isAdmin?: BoolFieldUpdateOperationsInput | boolean
     isOwner?: BoolFieldUpdateOperationsInput | boolean
     isFriend?: BoolFieldUpdateOperationsInput | boolean
+    isShowStatus?: BoolFieldUpdateOperationsInput | boolean
     presentMessages?: PresentMessageUpdateManyWithoutUserNestedInput
   }
 
@@ -6734,6 +6764,7 @@ export namespace Prisma {
     isAdmin?: BoolFieldUpdateOperationsInput | boolean
     isOwner?: BoolFieldUpdateOperationsInput | boolean
     isFriend?: BoolFieldUpdateOperationsInput | boolean
+    isShowStatus?: BoolFieldUpdateOperationsInput | boolean
     presentMessages?: PresentMessageUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -6789,6 +6820,7 @@ export namespace Prisma {
     isAdmin?: boolean
     isOwner?: boolean
     isFriend?: boolean
+    isShowStatus?: boolean
     presents?: PresentCreateNestedManyWithoutUserInput
   }
 
@@ -6802,6 +6834,7 @@ export namespace Prisma {
     isAdmin?: boolean
     isOwner?: boolean
     isFriend?: boolean
+    isShowStatus?: boolean
     presents?: PresentUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -6863,6 +6896,7 @@ export namespace Prisma {
     isAdmin?: BoolFieldUpdateOperationsInput | boolean
     isOwner?: BoolFieldUpdateOperationsInput | boolean
     isFriend?: BoolFieldUpdateOperationsInput | boolean
+    isShowStatus?: BoolFieldUpdateOperationsInput | boolean
     presents?: PresentUpdateManyWithoutUserNestedInput
   }
 
@@ -6876,6 +6910,7 @@ export namespace Prisma {
     isAdmin?: BoolFieldUpdateOperationsInput | boolean
     isOwner?: BoolFieldUpdateOperationsInput | boolean
     isFriend?: BoolFieldUpdateOperationsInput | boolean
+    isShowStatus?: BoolFieldUpdateOperationsInput | boolean
     presents?: PresentUncheckedUpdateManyWithoutUserNestedInput
   }
 
