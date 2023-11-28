@@ -147,18 +147,22 @@ export class Owner<C extends MyContext> extends Composer<C> {
 			return;
 		}
 
-		await prisma.user.update({
-			where: { id: ctx.from.id },
-			data: { isShowStatus: mode === "on" },
-		});
+		try {
+			await prisma.user.update({
+				where: { id: ctx.from.id },
+				data: { isShowStatus: mode === "on" },
+			});
 
-		await ctx.reply(
-			mode === "on"
-				? "Теперь вы видите статус подарков"
-				: "Статус подарков для вас скрыт"
-		);
+			await ctx.reply(
+				mode === "on"
+					? "Теперь вы видите статус подарков"
+					: "Статус подарков для вас скрыт"
+			);
 
-		await sendPresentMessage(ctx.chat.id);
+			await sendPresentMessage(ctx.chat.id);
+		} catch (error) {
+			console.error(error);
+		}
 	}
 
 	async addFriend(ctx: CommandContext<C>) {
