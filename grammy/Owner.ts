@@ -95,7 +95,7 @@ export class Owner<C extends MyContext> extends Composer<C> {
 		this.errorBoundary(errorHandler);
 	}
 
-	async help(ctx: Filter<C, "callback_query:data">, prefix: string) {
+	async help(ctx: CommandContext<C>) {
 		await ctx.reply(helpText);
 	}
 
