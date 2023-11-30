@@ -18,26 +18,27 @@ const usersToList = (users: User[]) =>
 		)
 		.join(", ");
 
-const helpText: string = `/help
+const helpText: string = `
+/help
 /info
 Эта подсказка.
 
-/setshowstatus on|off
-/set_show_status on|off
+/setshowstatus on off
+/set_show_status on off
 Переключение режима просмотра статуса подарков.
 
 /friends
 /friend
 Вывод списка друзей.
 
-/add_friend @username1 @username2
-/addfriend @username1 @username2
+/add_friend @a @b
+/addfriend @a @b
 Добавить друга в список пользователей.
 
-/remove_friend @username1 @username2
-/removefriend @username1 @username2
-/delete_friend @username1 @username2
-/deletefriend @username1 @username2
+/remove_friend @a @b
+/removefriend @a @b
+/delete_friend @a @b
+/deletefriend @a @b
 Удалить человека из списока пользователей.
 
 /addpresent
@@ -45,7 +46,10 @@ const helpText: string = `/help
 /create_present
 /createpresent
 Добавить новый подарок.
-`;
+
+Powered by GrammyJS.
+Бота написал и подготовил @AlekseyDanchin (с)
+`.trim();
 
 export class Owner<C extends MyContext> extends Composer<C> {
 	constructor(...args: any[]) {
@@ -93,10 +97,6 @@ export class Owner<C extends MyContext> extends Composer<C> {
 		});
 
 		this.errorBoundary(errorHandler);
-	}
-
-	async help(ctx: CommandContext<C>) {
-		await ctx.reply(helpText);
 	}
 
 	async prevPresent(ctx: Filter<C, "callback_query:data">, prefix: string) {
@@ -157,6 +157,10 @@ export class Owner<C extends MyContext> extends Composer<C> {
 		if (messageId) {
 			await updatePresentMessage(present, messageId);
 		}
+	}
+
+	async help(ctx: CommandContext<C>) {
+		await ctx.reply(helpText);
 	}
 
 	async showFriends(ctx: CommandContext<C>) {
