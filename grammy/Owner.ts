@@ -18,6 +18,35 @@ const usersToList = (users: User[]) =>
 		)
 		.join(", ");
 
+const helpText = `/help
+/info
+Эта подсказка.
+
+/setshowstatus on|off
+/set_show_status on|off
+Переключение режима просмотра статуса подарков.
+
+/friends
+/friend
+Вывод списка друзей.
+
+/add_friend @username1 @username2
+/addfriend @username1 @username2
+Добавить друга в список пользователей.
+
+/remove_friend @username1 @username2
+/removefriend @username1 @username2
+/delete_friend @username1 @username2
+/deletefriend @username1 @username2
+Удалить человека из списока пользователей.
+
+/addpresent
+/add_present
+/create_present
+/createpresent
+Добавить новый подарок.
+`;
+
 export class Owner<C extends MyContext> extends Composer<C> {
 	constructor(...args: any[]) {
 		super(...args);
@@ -36,7 +65,7 @@ export class Owner<C extends MyContext> extends Composer<C> {
 			.filter((ctx) => ctx.callbackQuery.data.startsWith("edit_present_"))
 			.use((ctx) => this.editPresent(ctx, "edit_present_"));
 
-		this.command("friends", (ctx) => this.showFriends(ctx));
+		this.command(["friends", "friend"], (ctx) => this.showFriends(ctx));
 
 		this.command(["setshowstatus", "set_show_status"], (ctx) =>
 			this.setShowStatus(ctx)
@@ -53,6 +82,8 @@ export class Owner<C extends MyContext> extends Composer<C> {
 			(ctx) => ctx.conversation.enter("create_present")
 		);
 
+		this.command(["help", "info"], (ctx) => this.help(ctx));
+
 		this.use(async (ctx) => {
 			const chatId = ctx.chat?.id;
 
@@ -62,6 +93,10 @@ export class Owner<C extends MyContext> extends Composer<C> {
 		});
 
 		this.errorBoundary(errorHandler);
+	}
+
+	async help(ctx: Filter<C, "callback_query:data">, prefix: string) {
+		await ctx.reply(helpText);
 	}
 
 	async prevPresent(ctx: Filter<C, "callback_query:data">, prefix: string) {
