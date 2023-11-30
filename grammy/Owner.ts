@@ -2,7 +2,11 @@ import { CommandContext, Composer, Filter } from "grammy";
 import { errorHandler } from "./util";
 import { MyContext, prisma } from "./bot";
 import { User } from "./prisma/client";
-import { sendPresentMessage, updatePresentMessage } from "./PresentService";
+import {
+	sendPresentMessage,
+	updatePresentMessage,
+	updatePresentMessages,
+} from "./PresentService";
 
 const usersToList = (users: User[]) =>
 	users
@@ -298,6 +302,19 @@ export class Owner<C extends MyContext> extends Composer<C> {
 			where: { OR: users.map((user) => ({ username: user.username })) },
 			data: { isFriend: false },
 		});
+
+		const presents = await prisma.present.findMany({
+			where: { OR: users.map((user) => ({ userId: user.id })) },
+		});
+
+		await prisma.present.updateMany({
+			where: { OR: users.map((user) => ({ userId: user.id })) },
+			data: { isVacant: true },
+		});
+
+		for (const present of presents) {
+			await updatePresentMessages(present.id);
+		}
 
 		await ctx.reply(
 			"Следующие люди теперь не в списке друзей:\n" +
