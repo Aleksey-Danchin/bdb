@@ -18,7 +18,7 @@ const usersToList = (users: User[]) =>
 		)
 		.join(", ");
 
-const helpText = `/help
+const helpText: string = `/help
 /info
 Эта подсказка.
 
