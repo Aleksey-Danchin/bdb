@@ -175,7 +175,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/app/prisma/client",
+      "value": "/home/aleksey/Desktop/bdb/grammy/prisma/client",
       "fromEnvVar": null
     },
     "config": {
@@ -204,6 +204,7 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": true,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -213,7 +214,8 @@ const config = {
     }
   },
   "inlineSchema": "Ly8gVGhpcyBpcyB5b3VyIFByaXNtYSBzY2hlbWEgZmlsZSwKLy8gbGVhcm4gbW9yZSBhYm91dCBpdCBpbiB0aGUgZG9jczogaHR0cHM6Ly9wcmlzLmx5L2QvcHJpc21hLXNjaGVtYQoKZ2VuZXJhdG9yIGNsaWVudCB7CiAgcHJvdmlkZXIgICAgICAgID0gInByaXNtYS1jbGllbnQtanMiCiAgb3V0cHV0ICAgICAgICAgID0gIi4vY2xpZW50IgogIHByZXZpZXdGZWF0dXJlcyA9IFsiZnVsbFRleHRTZWFyY2giXQp9CgpkYXRhc291cmNlIGRiIHsKICBwcm92aWRlciA9ICJwb3N0Z3Jlc3FsIgogIHVybCAgICAgID0gZW52KCJEQVRBQkFTRV9VUkwiKQp9Cgptb2RlbCBTZXNzaW9uIHsKICBrZXkgICBTdHJpbmcgQHVuaXF1ZQogIHZhbHVlIFN0cmluZwp9Cgptb2RlbCBVc2VyIHsKICBpZCAgICAgICAgSW50ICAgICAgQHVuaXF1ZQogIGNyZWF0ZWRBdCBEYXRlVGltZSBAZGVmYXVsdChub3coKSkKICB1cGRhdGVkQXQgRGF0ZVRpbWUgQHVwZGF0ZWRBdAoKICBmaXJzdF9uYW1lIFN0cmluZz8KICBsYXN0X25hbWUgIFN0cmluZz8KICB1c2VybmFtZSAgIFN0cmluZz8KCiAgaXNBZG1pbiAgQm9vbGVhbiBAZGVmYXVsdChmYWxzZSkKICBpc093bmVyICBCb29sZWFuIEBkZWZhdWx0KGZhbHNlKQogIGlzRnJpZW5kIEJvb2xlYW4gQGRlZmF1bHQoZmFsc2UpCgogIGlzU2hvd1N0YXR1cyBCb29sZWFuIEBkZWZhdWx0KGZhbHNlKQoKICBwcmVzZW50cyAgICAgICAgUHJlc2VudFtdCiAgcHJlc2VudE1lc3NhZ2VzIFByZXNlbnRNZXNzYWdlW10KfQoKbW9kZWwgUHJlc2VudCB7CiAgaWQgICAgICAgIEludCAgICAgIEBpZCBAZGVmYXVsdChhdXRvaW5jcmVtZW50KCkpCiAgY3JlYXRlZEF0IERhdGVUaW1lIEBkZWZhdWx0KG5vdygpKQogIHVwZGF0ZWRBdCBEYXRlVGltZSBAdXBkYXRlZEF0CgogIHRpdGxlICAgICAgIFN0cmluZyBAdW5pcXVlCiAgaW1hZ2UgICAgICAgU3RyaW5nCiAgZGVzY3JpcHRpb24gU3RyaW5nCgogIGlzVmFjYW50IEJvb2xlYW4gQGRlZmF1bHQodHJ1ZSkKCiAgdXNlciAgIFVzZXI/IEByZWxhdGlvbihmaWVsZHM6IFt1c2VySWRdLCByZWZlcmVuY2VzOiBbaWRdKQogIHVzZXJJZCBJbnQ/CgogIHByZXNlbnRNZXNzYWdlcyBQcmVzZW50TWVzc2FnZVtdCn0KCm1vZGVsIFByZXNlbnRNZXNzYWdlIHsKICBjcmVhdGVkQXQgRGF0ZVRpbWUgQGRlZmF1bHQobm93KCkpCiAgdXBkYXRlZEF0IERhdGVUaW1lIEB1cGRhdGVkQXQKCiAgY2hhdElkICAgIEludCBAdW5pcXVlCiAgbWVzc2FnZUlkIEludAoKICBwcmVzZW50ICAgUHJlc2VudCBAcmVsYXRpb24oZmllbGRzOiBbcHJlc2VudElkXSwgcmVmZXJlbmNlczogW2lkXSkKICBwcmVzZW50SWQgSW50CgogIHVzZXIgICBVc2VyIEByZWxhdGlvbihmaWVsZHM6IFt1c2VySWRdLCByZWZlcmVuY2VzOiBbaWRdKQogIHVzZXJJZCBJbnQKfQo=",
-  "inlineSchemaHash": "8fdd804dade9a9d6a0bb0fb54043422b5f921ce02295d1742cb08eadef77cec6"
+  "inlineSchemaHash": "8fdd804dade9a9d6a0bb0fb54043422b5f921ce02295d1742cb08eadef77cec6",
+  "noEngine": false
 }
 
 const fs = require('fs')

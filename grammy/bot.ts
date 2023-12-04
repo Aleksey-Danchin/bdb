@@ -64,20 +64,20 @@ async function createPresent(conversation: MyConversation, ctx: MyContext) {
 
 	while (true) {
 		await ctx.reply("Давай дадим название подарку:");
-		const data = await conversation.wait();
+		ctx = await conversation.wait();
 
-		if (data.message?.text) {
-			title = data.message.text;
+		if (ctx.message?.text) {
+			title = ctx.message.text;
 			break;
 		}
 	}
 
 	while (true) {
 		await ctx.reply("Пришли картинку:");
-		const data = await conversation.wait();
+		ctx = await conversation.wait();
 
-		if (data.message?.photo?.length) {
-			image = data.message.photo[0].file_id;
+		if (ctx.message?.photo?.length) {
+			image = ctx.message.photo[0].file_id;
 			break;
 		}
 	}
@@ -86,10 +86,10 @@ async function createPresent(conversation: MyConversation, ctx: MyContext) {
 		await ctx.reply(
 			"Дай описания подарка. Цвет, размер, количество, где можно взять, как упаковать и тд."
 		);
-		const data = await conversation.wait();
+		ctx = await conversation.wait();
 
-		if (data.message?.text) {
-			description = data.message.text;
+		if (ctx.message?.text) {
+			description = ctx.message.text;
 			break;
 		}
 	}
@@ -103,11 +103,11 @@ async function createPresent(conversation: MyConversation, ctx: MyContext) {
 				.text("Готово"),
 		});
 
-		const answer = await conversation.wait();
+		ctx = await conversation.wait();
 
 		await ctx.api.deleteMessage(message.chat.id, message.message_id);
 
-		const text = answer.update.callback_query?.data;
+		const text = ctx.update.callback_query?.data;
 
 		if (text === "Отменить") {
 			await ctx.reply("Ты можешь добавить новый подарок в любой момент.");
@@ -165,8 +165,8 @@ async function editPresent(conversation: MyConversation, ctx: MyContext) {
 		if (data === "Название") {
 			while (true) {
 				await ctx.reply("Пришли новое название:");
-				const data = await conversation.wait();
-				const text = data.message?.text;
+				ctx = await conversation.wait();
+				const text = ctx.message?.text;
 
 				if (text) {
 					title = text;
@@ -176,8 +176,8 @@ async function editPresent(conversation: MyConversation, ctx: MyContext) {
 		} else if (data === "Описание") {
 			while (true) {
 				await ctx.reply("Пришли новое описание:");
-				const data = await conversation.wait();
-				const text = data.message?.text;
+				ctx = await conversation.wait();
+				const text = ctx.message?.text;
 
 				if (text) {
 					description = text;
@@ -187,13 +187,13 @@ async function editPresent(conversation: MyConversation, ctx: MyContext) {
 		} else if (data === "Картинку") {
 			while (true) {
 				await ctx.reply("Пришли новую картинку (фото):");
-				const data = await conversation.wait();
+				ctx = await conversation.wait();
 
 				if (
-					data.message?.photo?.length &&
-					data.message.photo[0].file_id
+					ctx.message?.photo?.length &&
+					ctx.message.photo[0].file_id
 				) {
-					image = data.message.photo[0].file_id;
+					image = ctx.message.photo[0].file_id;
 					break;
 				}
 			}
@@ -212,8 +212,8 @@ async function editPresent(conversation: MyConversation, ctx: MyContext) {
 					reply_markup: InlineKeyboard.from([buttons]),
 				});
 
-				const data = await conversation.wait();
-				const text = data.callbackQuery?.data;
+				ctx = await conversation.wait();
+				const text = ctx.callbackQuery?.data;
 
 				if (text === "Удалить") {
 					await deletePresentMessages(present.id);
